@@ -14,3 +14,5 @@ class SpecializationAdmin(admin.ModelAdmin):
 admin.site.register(models.Specialization,SpecializationAdmin)
 
 admin.site.register(models.AvailableTime)
+
+admin.site.register(models.Review)
