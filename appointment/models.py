@@ -4,9 +4,10 @@ from doctor.models import Doctor,AvailableTime
 # Create your models here.
 
 APPOINTMENT_STATUS=[
-  ('Completed','Completed'),
-  ('Running','Running'),
   ('Pending','Pending'),
+  ('Running','Running'),
+  ('Completed','Completed')
+  
 ]
 APPOINTMENT_TYPES=[
   ('Online','Online'),
@@ -19,7 +20,7 @@ class Appointment(models.Model):
   appointment_types=models.CharField(choices=APPOINTMENT_TYPES,max_length=20)
   appointment_status=models.CharField(choices=APPOINTMENT_STATUS,max_length=20,default='Pending')
   symptom=models.TextField()
-  time=models.OneToOneField(AvailableTime,on_delete=models.CASCADE)
+  time=models.ForeignKey(AvailableTime,on_delete=models.CASCADE)
   cancle=models.BooleanField(default=False)
 
   def __str__(self) -> str:
