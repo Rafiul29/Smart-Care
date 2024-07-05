@@ -27,6 +27,6 @@ class DoctorViewSet(viewsets.ModelViewSet):
   serializer_class=DoctorSerializer
 
 class ReviewViewSet(viewsets.ModelViewSet):
-  # permission_classes=[IsAuthenticated]
+  permission_classes=[IsAuthenticated]
   queryset=Review.objects.all()
   serializer_class=ReviewSerializer
