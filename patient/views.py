@@ -2,16 +2,17 @@ from django.shortcuts import render,redirect
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from .models import Patient
-from .serializers import PatientSerializer,RegistrationSerializer
+from .serializers import PatientSerializer,RegistrationSerializer,UserLoginSerializer
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
 from django.utils.encoding import force_bytes
-
+from django.contrib.auth import authenticate
 #for sending email
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from rest_framework.authtoken.models import Token
 
 # Create your views here.
 
@@ -55,6 +56,23 @@ def activate(request,uid64,token):
   if user is not None and default_token_generator.check_token(user,token):
     user.is_active=True
     user.save()
-    return redirect('register')
+    return redirect('login')
   else:
     return redirect('register')
+  
+
+class UserLoginApiView(APIView):
+  def post(self, request):
+    serializer = UserLoginSerializer(data = self.request.data)
+    if serializer.is_valid():
+      username = serializer.validated_data['username']
+      password = serializer.validated_data['password']
+
+      user = authenticate(username= username, password=password)
+            
+      if user:
+         token, _ = Token.objects.get_or_create(user=user)
+         return Response({'token' : token.key, 'user_id' : user.id})
+      else:
+        return Response({'error' : "Invalid Credential"})
+    return Response(serializer.errors)
